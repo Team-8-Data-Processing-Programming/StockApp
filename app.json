@@ -25,18 +25,18 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "extra": {
-      "eas": {
-        "projectId": "f4b7c2dd-aa05-470f-b0ec-159049edb439"
-      }
-    },
-    "owner": "gkrrywhtk2",
+    "owner": "team8gachon",
     "privacy": "public",
     "runtimeVersion": {
       "policy": "appVersion"
     },
     "updates": {
-      "url": "https://u.expo.dev/f4b7c2dd-aa05-470f-b0ec-159049edb439"
+      "url": "https://u.expo.dev/d639b325-a955-4faa-ac4a-743c63999777"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "d639b325-a955-4faa-ac4a-743c63999777"
+      }
     }
   }
 }
