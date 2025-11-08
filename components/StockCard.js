@@ -4,11 +4,18 @@ import { View, Text, StyleSheet } from 'react-native';
 export default function StockCard({ stock, rank }) {
   const isUp = stock.change > 0;
 
+  const getMedalEmoji = (rank) => {
+    if (rank === 1) return '🥇';
+    if (rank === 2) return '🥈';
+    if (rank === 3) return '🥉';
+    return rank;
+  };
+  
   return (
     <View style={styles.card}>
       {/* ✅ 순위 번호 */}
       <View style={styles.rankBox}>
-        <Text style={styles.rankText}>{rank}</Text>
+        <Text style={styles.rankText}>{getMedalEmoji(rank)}</Text>
       </View>
 
       {/* ✅ 주식 정보 */}
@@ -48,7 +55,7 @@ const styles = StyleSheet.create({
   rankText: {
     color: '#153fe4ff', // 황금색 느낌 (순위 강조)
     fontWeight: '700',
-    fontSize: 16,
+    fontSize: 20,
   },
   infoBox: {
     flex: 1,
