@@ -19,7 +19,7 @@ export default function MarketSummary() {
               <Text style={styles.name}>{item.name}</Text>
               <Text style={styles.value}>{item.value.toLocaleString()}</Text>
               <Text
-                style={[styles.change, { color: isUp ? '#4CAF50' : '#FF5B5B' }]}
+                style={[styles.change, { color: isUp ? '#FF5B5B' : '#4A90E2' }]}
               >
                 {isUp ? '↗ +' : '↘ '}
                 {item.change.toFixed(2)}
