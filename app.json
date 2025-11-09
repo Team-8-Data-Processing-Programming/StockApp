@@ -1,0 +1,42 @@
+{
+  "expo": {
+    "name": "StockApp",
+    "slug": "StockApp",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "edgeToEdgeEnabled": true
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "owner": "team8gachon",
+    "privacy": "public",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/d639b325-a955-4faa-ac4a-743c63999777"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "d639b325-a955-4faa-ac4a-743c63999777"
+      }
+    }
+  }
+}
