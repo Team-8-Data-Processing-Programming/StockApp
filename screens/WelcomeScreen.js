@@ -1,7 +1,14 @@
 // screens/WelcomeScreen.js
 
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Animated, Easing } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Animated,
+  Easing,
+} from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 
 export default function WelcomeScreen({ navigation }) {
@@ -35,18 +42,18 @@ export default function WelcomeScreen({ navigation }) {
   return (
     <View style={styles.container}>
       {/* 타이틀 */}
-      <Text style={styles.title}>
-        오늘의 주식정보가{'\n'}궁금하다면
-      </Text>
+      <Text style={styles.title}>오늘의 주식정보가{'\n'}궁금하다면</Text>
 
       {/* 아이콘 애니메이션 */}
-      <Animated.View style={[styles.iconBox, { transform: [{ scale: bounceValue }] }]}>
+      <Animated.View
+        style={[styles.iconBox, { transform: [{ scale: bounceValue }] }]}
+      >
         <MaterialIcons name="trending-up" size={64} color="white" />
       </Animated.View>
 
       {/* 시작 버튼 */}
       <TouchableOpacity style={styles.button} onPress={handleStart}>
-        <Text style={styles.buttonText}>추천 받기</Text>
+        <Text style={styles.buttonText}>시작 하기</Text>
       </TouchableOpacity>
     </View>
   );
@@ -80,8 +87,8 @@ const styles = StyleSheet.create({
     shadowRadius: 20,
     marginBottom: 60,
   },
-  
- button: {
+
+  button: {
     backgroundColor: '#7c3aed',
     paddingVertical: 14,
     paddingHorizontal: 32,
