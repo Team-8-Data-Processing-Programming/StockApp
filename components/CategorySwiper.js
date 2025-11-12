@@ -1,132 +1,92 @@
-import React, { useState } from 'react';
-import { View, Text, FlatList, StyleSheet, Dimensions } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, FlatList, StyleSheet, Dimensions, ActivityIndicator } from 'react-native';
 import PagerView from 'react-native-pager-view';
 import StockCard from './StockCard';
 
 const { width } = Dimensions.get('window');
+const API_BASE = 'http://172.20.10.3:8000';
+
+const CATEGORY_DEFS = [
+  { title: '🚀 상승률 TOP10',   path: '/screen/top-gainers',          unit: '%', metricLabel: '상승률' },
+  { title: '📉 하락률 TOP10',       path: '/screen/top-losers',           unit: '%', metricLabel: '상승률' }, // 표시만 '상승률 -x.x%'로 재활용
+  { title: '📈 거래량 급증 TOP10', path: '/screen/volume-surge',        unit: '%',  metricLabel: '거래량증가율' },
+  { title: '📈 3일 연속 상승',     path: '/screen/three-up',            unit: '%', metricLabel: '상승률' },
+  { title: '💥 급락 후 반등 TOP10',  path: '/screen/bounce-after-plunge',  unit: '%', metricLabel: '상승률' },
+  { title: '💰 거래대금 TOP10',   path: '/screen/top-by-trading-value', unit: '',  metricLabel: '거래대금' },
+  { title: '🧱 안정적 우량주 TOP10', path: '/screen/stable-bluechips',     unit: '',  metricLabel: '변동성' },
+  { title: '💵 배당수익률 TOP10',  path: '/screen/dividend-yield',      unit: '%', metricLabel: '배당수익률' },
+  { title: '💎 저 PER TOP10',     path: '/screen/low-per',              unit: '',  metricLabel: 'PER' },
+  { title: '📘 저 PBR TOP10',     path: '/screen/low-pbr',              unit: '',  metricLabel: 'PBR' },
+];
 
 export default function CategorySwiper() {
   const [page, setPage] = useState(0);
+  const [pages, setPages] = useState(
+    CATEGORY_DEFS.map(c => ({ ...c, data: [], loading: true, error: null }))
+  );
 
-  // 카테고리 목록
-  const categories = [
-    {
-      title: '📊 인기 종목',
-      data: [
-        { id: '1', name: '삼성전자', price: 71800, change: 1200, rate: 1.7 },
-        {
-          id: '2',
-          name: 'SK하이닉스',
-          price: 134500,
-          change: -2500,
-          rate: -1.82,
-        },
-        { id: '3', name: 'LG화학', price: 460000, change: 5000, rate: 1.1 },
-        { id: '4', name: '카카오', price: 54000, change: -800, rate: -1.46 },
-        { id: '5', name: '현대차', price: 220000, change: 2500, rate: 1.15 },
-      ],
-    },
-    {
-      title: '🚀 오늘 가장 많이 오른 종목',
-      data: [
-        { id: '1', name: '한화솔루션', price: 42000, change: 4000, rate: 10.5 },
-        { id: '2', name: '셀트리온', price: 185000, change: 17000, rate: 10.1 },
-        { id: '3', name: 'NAVER', price: 195000, change: 15000, rate: 8.3 },
-        {
-          id: '4',
-          name: '현대모비스',
-          price: 260000,
-          change: 18000,
-          rate: 7.4,
-        },
-        { id: '5', name: '삼성SDI', price: 470000, change: 30000, rate: 6.8 },
-      ],
-    },
-    {
-      title: '📈 연속 상승일 기준',
-      data: [
-        {
-          id: '1',
-          name: 'POSCO홀딩스',
-          price: 480000,
-          change: 2500,
-          rate: 0.5,
-        },
-        {
-          id: '2',
-          name: '두산에너빌리티',
-          price: 16000,
-          change: 400,
-          rate: 2.5,
-        },
-        { id: '3', name: '현대제철', price: 35000, change: 900, rate: 2.7 },
-        { id: '4', name: '한미약품', price: 330000, change: 12000, rate: 3.7 },
-        {
-          id: '5',
-          name: 'LG에너지솔루션',
-          price: 420000,
-          change: 8000,
-          rate: 1.9,
-        },
-      ],
-    },
-    {
-      title: '🔥 거래량 급등 종목',
-      data: [
-        { id: '1', name: 'HMM', price: 19000, change: 700, rate: 3.8 },
-        { id: '2', name: '롯데케미칼', price: 160000, change: 8000, rate: 5.2 },
-        { id: '3', name: '대한항공', price: 31000, change: 1200, rate: 4.0 },
-        { id: '4', name: '한온시스템', price: 10500, change: 300, rate: 2.9 },
-        {
-          id: '5',
-          name: '아모레퍼시픽',
-          price: 125000,
-          change: -3000,
-          rate: -2.3,
-        },
-      ],
-    },
-    {
-      title: '🌟 이동평균 돌파 (Golden Cross)',
-      data: [
-        { id: '1', name: 'LG전자', price: 108000, change: 3500, rate: 3.3 },
-        {
-          id: '2',
-          name: '현대글로비스',
-          price: 190000,
-          change: 5000,
-          rate: 2.7,
-        },
-        {
-          id: '3',
-          name: 'SK이노베이션',
-          price: 160000,
-          change: 4000,
-          rate: 2.6,
-        },
-        { id: '4', name: 'KT&G', price: 95000, change: 2000, rate: 2.1 },
-        { id: '5', name: 'CJ제일제당', price: 340000, change: 8000, rate: 2.4 },
-      ],
-    },
-  ];
+  useEffect(() => {
+    (async () => {
+      await Promise.all(
+        CATEGORY_DEFS.map(async (cat, idx) => {
+          try {
+            const res = await fetch(`${API_BASE}${cat.path}?limit=10`);
+            if (!res.ok) {
+              const msg = await res.text();
+              throw new Error(`${res.status} ${msg.slice(0, 120)}`);
+            }
+            const json = await res.json();
+            setPages(prev => {
+              const copy = [...prev];
+              copy[idx] = { ...copy[idx], data: json.data || [], loading: false, error: null };
+              return copy;
+            });
+          } catch (e) {
+            setPages(prev => {
+              const copy = [...prev];
+              copy[idx] = { ...copy[idx], loading: false, error: `불러오기 실패: ${String(e.message)}` };
+              return copy;
+            });
+          }
+        })
+      );
+    })();
+  }, []);
 
   return (
     <View style={styles.wrapper}>
-      <Text style={styles.categoryTitle}>{categories[page].title}</Text>
+      <Text style={styles.categoryTitle}>{pages[page]?.title || ''}</Text>
       <PagerView
         style={{ flex: 1 }}
         initialPage={0}
         onPageSelected={(e) => setPage(e.nativeEvent.position)}
       >
-        {categories.map((cat, index) => (
+        {pages.map((cat, index) => (
           <View key={index} style={styles.page}>
-            <FlatList
-              data={cat.data}
-              keyExtractor={(item) => item.id}
-              renderItem={({ item, index }) => (
-                <StockCard stock={item} rank={index + 1} />
-              )}
-            />
+            {cat.loading ? (
+              <ActivityIndicator />
+            ) : cat.error ? (
+              <Text style={{ color: '#fff' }}>{cat.error}</Text>
+            ) : (
+              <FlatList
+                data={cat.data}
+                keyExtractor={(item, i) => item.ticker || item.id || String(i)}
+                renderItem={({ item, index }) => (
+                  <StockCard
+                    rank={index + 1}
+                    stock={{
+                      id: item.ticker || item.id,
+                      name: item.name,
+                      price: item.price,
+                      change: item.change,   // % or PER/PBR/거래대금 지표값
+                      value: item.value,     // 거래대금용
+                      unit: cat.unit,        // '%'(상승률) 또는 ''
+                      metricLabel: cat.metricLabel, // '상승률' | '거래대금' | 'PER' | 'PBR'
+                    }}
+                  />
+                )}
+              />
+            )}
           </View>
         ))}
       </PagerView>
@@ -135,17 +95,7 @@ export default function CategorySwiper() {
 }
 
 const styles = StyleSheet.create({
-  wrapper: {
-    flex: 1,
-    marginBottom: 24,
-  },
-  categoryTitle: {
-    color: '#FFFFFF',
-    fontSize: 20,
-    fontWeight: '700',
-    marginBottom: 10,
-  },
-  page: {
-    width: width,
-  },
+  wrapper: { flex: 1, marginBottom: 24 },
+  categoryTitle: { color: '#FFFFFF', fontSize: 20, fontWeight: '700', marginBottom: 10 },
+  page: { width: width, flex: 1 }, 
 });
