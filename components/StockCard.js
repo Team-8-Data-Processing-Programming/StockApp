@@ -1,9 +1,19 @@
-// components/StockCard.js
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 export default function StockCard({ stock, rank }) {
+  const navigation = useNavigation();
+
   if (!stock) return null;
+
+  // 🔹 카드 클릭 시 상세 화면으로 이동
+  const handlePress = () => {
+    navigation.navigate('StockDetail', {
+      stockName: stock.name,
+      ticker: stock.id, // ✅ 여기가 바로 종목코드
+    });
+  };
 
   // 퍼센트로 칠해줄 기준: unit === '%' 이거나 라벨이 '배당수익률'/'상승률'
   const isPercent =
@@ -17,30 +27,22 @@ export default function StockCard({ stock, rank }) {
   const num = (v, d = 0) =>
     Number(v ?? 0).toLocaleString(undefined, { maximumFractionDigits: d });
 
-  const getMedalEmoji = (rank) => {
-    if (rank === 1) return '🥇';
-    if (rank === 2) return '🥈';
-    if (rank === 3) return '🥉';
-    return rank;
-  };
-
   let metricText = '';
   switch (stock?.metricLabel) {
     case '상승률':
       metricText = `${valNum > 0 ? '+' : ''}${valNum.toFixed(2)}%`;
       break;
     case '거래량증가율':
-      // 정렬은 증가율로 하지만, 화면 표시는 거래량 주로 하고 싶다면 label을 '거래량'으로 넘기면 됨
       metricText = `+${valNum.toFixed(2)}%`;
       break;
     case '변동성':
       metricText = `20일 변동성 ${valNum.toFixed(2)}%`;
       break;
     case '거래량':
-      metricText = `거래량 ${num(stock?.value ?? stock?.volume)}주`;
+      metricText = `거래량 ${num(stock?.value)}주`;
       break;
     case '거래대금':
-      metricText = `거래대금 ${num(stock?.value ?? stock?.change)}원`;
+      metricText = `거래대금 ${num(stock?.value)}원`;
       break;
     case '배당수익률':
       metricText = `배당수익률 ${valNum.toFixed(2)}%`;
@@ -56,25 +58,27 @@ export default function StockCard({ stock, rank }) {
   }
 
   return (
-    <View style={styles.card}>
-      <View style={styles.rankBox}>
-        <Text style={styles.rankText}>{rank}</Text>
+    <TouchableOpacity onPress={handlePress} activeOpacity={0.85}>
+      <View style={styles.card}>
+        <View style={styles.rankBox}>
+          <Text style={styles.rankText}>{rank}</Text>
+        </View>
+        <View style={styles.infoBox}>
+          <Text style={styles.name}>{stock?.name}</Text>
+          <Text style={styles.price}>{num(stock?.price)}원</Text>
+          <Text
+            style={[
+              styles.rate,
+              isPercent
+                ? { color: isUp ? '#FF5B5B' : '#4A90E2' }
+                : { color: '#B0B3C2' },
+            ]}
+          >
+            {metricText}
+          </Text>
+        </View>
       </View>
-      <View style={styles.infoBox}>
-        <Text style={styles.name}>{stock?.name}</Text>
-        <Text style={styles.price}>{num(stock?.price)}원</Text>
-        <Text
-          style={[
-            styles.rate,
-            isPercent
-              ? { color: isUp ? '#FF5B5B' : '#4A90E2' }
-              : { color: '#B0B3C2' },
-          ]}
-        >
-          {metricText}
-        </Text>
-      </View>
-    </View>
+    </TouchableOpacity>
   );
 }
 

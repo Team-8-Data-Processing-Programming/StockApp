@@ -299,3 +299,89 @@ def screen_low_pbr(limit: int = 10, min_price: int = 1000):
     df = df[(df["PBR"] > 0) & (df["종가"] >= min_price) & (df["거래량"] > 0)]
     df = df[df["PBR"].notna()].sort_values("PBR", ascending=True).assign(지표=lambda x: x["PBR"])
     return {"data": to_items(df, top=limit)}
+
+
+# 11) 주식 상세 보기
+@app.get("/stock/detail")
+def stock_detail(ticker: str):
+    d = today()
+    try:
+        # ✅ 1. KOSPI + KOSDAQ 모두 조회
+        f_kospi = stock.get_market_fundamental(d, market="KOSPI")
+        f_kosdaq = stock.get_market_fundamental(d, market="KOSDAQ")
+        f = pd.concat([f_kospi, f_kosdaq])
+
+        o_kospi = stock.get_market_ohlcv_by_ticker(d, market="KOSPI")
+        o_kosdaq = stock.get_market_ohlcv_by_ticker(d, market="KOSDAQ")
+        ohlcv = pd.concat([o_kospi, o_kosdaq])
+
+        cap_kospi = stock.get_market_cap_by_ticker(d, market="KOSPI")
+        cap_kosdaq = stock.get_market_cap_by_ticker(d, market="KOSDAQ")
+        cap = pd.concat([cap_kospi, cap_kosdaq])
+
+        # ✅ 2. 존재 여부 확인
+        if ticker not in f.index or ticker not in ohlcv.index:
+            return JSONResponse(
+                status_code=404,
+                content={"error": "Ticker not found", "ticker": ticker}
+            )
+
+        row_f = f.loc[ticker]
+        row_p = ohlcv.loc[ticker]
+
+        # ✅ 3. 시가총액 계산 (단위 자동 변환)
+        market_cap_value = 0.0
+        market_cap_text = "0원"
+
+        if ticker in cap.index:
+            val = cap.loc[ticker].get("시가총액", 0)
+            if val and not math.isnan(val):
+                market_cap_value = float(val)
+                # 단위 변환 (조 / 억 / 만 / 원)
+                if market_cap_value >= 1e12:
+                    market_cap_text = f"{market_cap_value / 1e12:.2f}조원"
+                elif market_cap_value >= 1e8:
+                    market_cap_text = f"{market_cap_value / 1e8:.0f}억원"
+                elif market_cap_value >= 1e4:
+                    market_cap_text = f"{market_cap_value / 1e4:.0f}만원"
+                else:
+                    market_cap_text = f"{market_cap_value:,.0f}원"
+
+        # ✅ 4. 안전한 데이터 추출 함수
+        def safe_get(row, key, default=0.0):
+            val = row.get(key, default)
+            if val is None or (isinstance(val, float) and math.isnan(val)):
+                return default
+            return float(val)
+
+        # ✅ 5. ROE 계산 (공식: ROE = (PBR / PER) * 100)
+        roe_val = safe_get(row_f, "ROE", 0.0)
+        if roe_val == 0.0 or math.isnan(roe_val):
+            per_val = safe_get(row_f, "PER", 0.0)
+            pbr_val = safe_get(row_f, "PBR", 0.0)
+            if per_val > 0 and pbr_val > 0:
+                roe_val = (pbr_val / per_val) * 100.0
+
+        # ✅ 6. 최종 데이터 패키징
+        data = {
+            "ticker": ticker,
+            "name": stock.get_market_ticker_name(ticker),
+            "price": safe_get(row_p, "종가", 0),
+            "change": round(safe_get(row_p, "등락률", 0.0), 1),
+            "marketCap": market_cap_text,  # ✅ 단위 포함 문자열
+            "dividendYield": round(safe_get(row_f, "DIV", 0.0), 2),
+            "pbr": round(safe_get(row_f, "PBR", 0.0), 2),
+            "per": round(safe_get(row_f, "PER", 0.0), 2),
+            "roe": round(roe_val, 2),
+        }
+
+        # ✅ 7. 디버깅 로그
+        print(f"[DETAIL] {data}")
+
+        return data
+
+    except Exception as e:
+        return JSONResponse(
+            status_code=500,
+            content={"error": str(e), "ticker": ticker}
+        )

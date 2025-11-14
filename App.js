@@ -3,6 +3,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { StatusBar } from 'expo-status-bar';
 import HomeScreen from './screens/HomeScreen';
 import WelcomeScreen from './screens/WelcomeScreen';
+import StockDetailScreen from './screens/StockDetailScreen';
 
 const Stack = createStackNavigator();
 
@@ -22,8 +23,17 @@ export default function App() {
             cardStyle: { backgroundColor: '#161B2E' },
           }}
         >
-          <Stack.Screen name="Welcome" component={WelcomeScreen} options={{ headerShown: false }}/>
+          <Stack.Screen
+            name="Welcome"
+            component={WelcomeScreen}
+            options={{ headerShown: false }}
+          />
           <Stack.Screen name="홈" component={HomeScreen} />
+          <Stack.Screen
+            name="StockDetail"
+            component={StockDetailScreen}
+            options={{ title: '주식 상세' }}
+          />
         </Stack.Navigator>
       </NavigationContainer>
     </>
