@@ -1,83 +1,90 @@
 import React, { useEffect, useState } from 'react';
-import {View,Text,FlatList,StyleSheet,Dimensions,ActivityIndicator} from 'react-native';
+import {
+  View,
+  Text,
+  FlatList,
+  StyleSheet,
+  Dimensions,
+  ActivityIndicator,
+} from 'react-native';
 import PagerView from 'react-native-pager-view';
 import StockCard from './StockCard';
 
 const { width } = Dimensions.get('window');
-const API_BASE = 'http://172.20.10.2';
+const API = 'http://172.30.1.84:8000';
 
 const CATEGORY_DEFS = [
-    {
-      title: '🚀 상승률 TOP10',
-      description: 'ㅎㅇ',
-      path: '/screen/top-gainers',
-      unit: '%',
-      metricLabel: '상승률',
-    },
-    {
-      title: '📉 하락률 TOP10',
-      description: 'ㅎㅇ',
-      path: '/screen/top-losers',
-      unit: '%',
-      metricLabel: '상승률',
-    }, // 표시만 '상승률 -x.x%'로 재활용
-    {
-      title: '📈 거래량 급증 TOP10',
-      description: 'ㅎㅇ',
-      path: '/screen/volume-surge',
-      unit: '%',
-      metricLabel: '거래량증가율',
-    },
-    {
-      title: '📈 3일 연속 상승',
-      description: 'ㅎㅇ',
-      path: '/screen/three-up',
-      unit: '%',
-      metricLabel: '상승률',
-    },
-    {
-      title: '💥 급락 후 반등 TOP10',
-      description: 'ㅎㅇ',
-      path: '/screen/bounce-after-plunge',
-      unit: '%',
-      metricLabel: '상승률',
-    },
-    {
-      title: '💰 거래대금 TOP10',
-      description: 'ㅎㅇ',
-      path: '/screen/top-by-trading-value',
-      unit: '',
-      metricLabel: '거래대금',
-    },
-    {
-      title: '🧱 안정적 우량주 TOP10',
-      description: 'ㅎㅇ',
-      path: '/screen/stable-bluechips',
-      unit: '',
-      metricLabel: '변동성',
-    },
-    {
-      title: '💵 배당수익률 TOP10',
-      description: 'ㅎㅇ',
-      path: '/screen/dividend-yield',
-      unit: '%',
-      metricLabel: '배당수익률',
-    },
-    {
-      title: '💎 저 PER TOP10',
-      description: 'ㅎㅇ',
-      path: '/screen/low-per',
-      unit: '',
-      metricLabel: 'PER',
-    },
-    {
-      title: '📘 저 PBR TOP10',
-      description: 'ㅎㅇ',
-      path: '/screen/low-pbr',
-      unit: '',
-      metricLabel: 'PBR',
-    },
-  ];
+  {
+    title: '🚀 상승률 TOP10',
+    description: 'ㅎㅇ',
+    path: '/screen/top-gainers',
+    unit: '%',
+    metricLabel: '상승률',
+  },
+  {
+    title: '📉 하락률 TOP10',
+    description: 'ㅎㅇ',
+    path: '/screen/top-losers',
+    unit: '%',
+    metricLabel: '상승률',
+  }, // 표시만 '상승률 -x.x%'로 재활용
+  {
+    title: '📈 거래량 급증 TOP10',
+    description: 'ㅎㅇ',
+    path: '/screen/volume-surge',
+    unit: '%',
+    metricLabel: '거래량증가율',
+  },
+  {
+    title: '📈 3일 연속 상승',
+    description: 'ㅎㅇ',
+    path: '/screen/three-up',
+    unit: '%',
+    metricLabel: '상승률',
+  },
+  {
+    title: '💥 급락 후 반등 TOP10',
+    description: 'ㅎㅇ',
+    path: '/screen/bounce-after-plunge',
+    unit: '%',
+    metricLabel: '상승률',
+  },
+  {
+    title: '💰 거래대금 TOP10',
+    description: 'ㅎㅇ',
+    path: '/screen/top-by-trading-value',
+    unit: '',
+    metricLabel: '거래대금',
+  },
+  {
+    title: '🧱 안정적 우량주 TOP10',
+    description: 'ㅎㅇ',
+    path: '/screen/stable-bluechips',
+    unit: '',
+    metricLabel: '변동성',
+  },
+  {
+    title: '💵 배당수익률 TOP10',
+    description: 'ㅎㅇ',
+    path: '/screen/dividend-yield',
+    unit: '%',
+    metricLabel: '배당수익률',
+  },
+  {
+    title: '💎 저 PER TOP10',
+    description: 'ㅎㅇ',
+    path: '/screen/low-per',
+    unit: '',
+    metricLabel: 'PER',
+  },
+  {
+    title: '📘 저 PBR TOP10',
+    description: 'ㅎㅇ',
+    path: '/screen/low-pbr',
+    unit: '',
+    metricLabel: 'PBR',
+  },
+];
 
 export default function CategorySwiper() {
   const [page, setPage] = useState(0);
@@ -92,7 +99,7 @@ export default function CategorySwiper() {
       await Promise.all(
         CATEGORY_DEFS.map(async (cat, idx) => {
           try {
-            const res = await fetch(`${API_BASE}${cat.path}?limit=10`);
+            const res = await fetch(`${API}${cat.path}?limit=10`);
             if (!res.ok) {
               const msg = await res.text();
               throw new Error(`${res.status} ${msg.slice(0, 120)}`);

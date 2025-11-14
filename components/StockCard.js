@@ -2,9 +2,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-export default StockCard;
-
-const StockCard = ({ stock, rank }) => {
+export default function StockCard({ stock, rank }) {
   if (!stock) return null;
 
   // 퍼센트로 칠해줄 기준: unit === '%' 이거나 라벨이 '배당수익률'/'상승률'
@@ -65,7 +63,8 @@ const StockCard = ({ stock, rank }) => {
       <View style={styles.infoBox}>
         <Text style={styles.name}>{stock?.name}</Text>
         <Text style={styles.price}>{num(stock?.price)}원</Text>
-        <Text style={[
+        <Text
+          style={[
             styles.rate,
             isPercent
               ? { color: isUp ? '#FF5B5B' : '#4A90E2' }
@@ -77,7 +76,7 @@ const StockCard = ({ stock, rank }) => {
       </View>
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   card: {
