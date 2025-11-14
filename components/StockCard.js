@@ -2,6 +2,8 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
+export default StockCard;
+
 const StockCard = ({ stock, rank }) => {
   if (!stock) return null;
 
@@ -16,6 +18,13 @@ const StockCard = ({ stock, rank }) => {
 
   const num = (v, d = 0) =>
     Number(v ?? 0).toLocaleString(undefined, { maximumFractionDigits: d });
+
+  const getMedalEmoji = (rank) => {
+    if (rank === 1) return '🥇';
+    if (rank === 2) return '🥈';
+    if (rank === 3) return '🥉';
+    return rank;
+  };
 
   let metricText = '';
   switch (stock?.metricLabel) {
@@ -56,8 +65,7 @@ const StockCard = ({ stock, rank }) => {
       <View style={styles.infoBox}>
         <Text style={styles.name}>{stock?.name}</Text>
         <Text style={styles.price}>{num(stock?.price)}원</Text>
-        <Text
-          style={[
+        <Text style={[
             styles.rate,
             isPercent
               ? { color: isUp ? '#FF5B5B' : '#4A90E2' }
@@ -70,8 +78,6 @@ const StockCard = ({ stock, rank }) => {
     </View>
   );
 };
-
-export default StockCard;
 
 const styles = StyleSheet.create({
   card: {

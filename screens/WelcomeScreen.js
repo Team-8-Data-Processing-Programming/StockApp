@@ -1,14 +1,7 @@
 // screens/WelcomeScreen.js
 
 import React from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  Animated,
-  Easing,
-} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity, Animated, Easing } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 
 export default function WelcomeScreen({ navigation }) {
@@ -53,7 +46,7 @@ export default function WelcomeScreen({ navigation }) {
 
       {/* 시작 버튼 */}
       <TouchableOpacity style={styles.button} onPress={handleStart}>
-        <Text style={styles.buttonText}>시작 하기</Text>
+        <Text style={styles.buttonText}>확인하기</Text>
       </TouchableOpacity>
     </View>
   );
