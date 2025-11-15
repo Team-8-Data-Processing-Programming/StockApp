@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 
-const API = 'http://172.30.1.84:8000'; // ← 각자 자기 PC IPv4 넣기
+const API = 'http://192.168.45.24:8000'; // ← 각자 자기 PC IPv4 넣기
 
 export default function MarketSummary() {
   const [marketData, setMarketData] = useState([]);
