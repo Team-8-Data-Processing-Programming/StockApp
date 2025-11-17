@@ -14,7 +14,7 @@ import PagerView from 'react-native-pager-view';
 import StockCard from './StockCard';
 
 const { width } = Dimensions.get('window');
-const API = 'http://172.30.1.84:8000';
+const API = 'http://192.168.219.106:8000';
 
 const CATEGORY_DEFS = [
   {
@@ -201,10 +201,7 @@ export default function CategorySwiper() {
                       id: item.ticker || item.id,
                       name: item.name,
                       price: item.price,
-                      change: item.change, // % or PER/PBR/거래대금 지표값
-                      value: item.value, // 거래대금용
-                      unit: cat.unit, // '%'(상승률) 또는 ''
-                      metricLabel: cat.metricLabel, // '상승률' | '거래대금' | 'PER' | 'PBR'
+                      change: item.change,
                     }}
                   />
                 )}

@@ -8,7 +8,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 
-const API = 'http://172.30.1.84:8000';
+const API = 'http://192.168.219.106:8000';
 
 export default function StockDetailScreen({ route }) {
   const { stockName, ticker } = route.params;
