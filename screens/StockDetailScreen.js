@@ -53,7 +53,14 @@ export default function StockDetailScreen({ route }) {
     );
   }
 
-  // 데이터 표시
+  const infoItems = [
+    { label: '시가총액', value: stockData.marketCap },
+    { label: '배당수익률', value: `${stockData.dividendYield?.toFixed(2)}%` },
+    { label: 'PBR', value: stockData.pbr?.toFixed(1) },
+    { label: 'PER', value: stockData.per?.toFixed(1) },
+    { label: 'ROE', value: `${stockData.roe?.toFixed(1)}%` },
+  ];
+
   return (
     <ScrollView
       style={styles.container}
@@ -75,30 +82,13 @@ export default function StockDetailScreen({ route }) {
         </Text>
       </View>
 
-      <View style={styles.infoBox}>
-        <View style={styles.infoRow}>
-          <Text style={styles.label}>시가총액</Text>
-          <Text style={styles.value}>{stockData.marketCap}</Text>
+      {/* 🔹 각 항목을 카드로 표시 */}
+      {infoItems.map((item, index) => (
+        <View key={index} style={styles.card}>
+          <Text style={styles.cardLabel}>{item.label}</Text>
+          <Text style={styles.cardValue}>{item.value}</Text>
         </View>
-        <View style={styles.infoRow}>
-          <Text style={styles.label}>배당수익률</Text>
-          <Text style={styles.value}>
-            {stockData.dividendYield?.toFixed(2)}%
-          </Text>
-        </View>
-        <View style={styles.infoRow}>
-          <Text style={styles.label}>PBR</Text>
-          <Text style={styles.value}>{stockData.pbr?.toFixed(1)}</Text>
-        </View>
-        <View style={styles.infoRow}>
-          <Text style={styles.label}>PER</Text>
-          <Text style={styles.value}>{stockData.per?.toFixed(1)}</Text>
-        </View>
-        <View style={styles.infoRow}>
-          <Text style={styles.label}>ROE</Text>
-          <Text style={styles.value}>{stockData.roe?.toFixed(1)}%</Text>
-        </View>
-      </View>
+      ))}
     </ScrollView>
   );
 }
@@ -136,23 +126,26 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     fontWeight: '600',
   },
-  infoBox: {
+  // 🔹 카드 스타일
+  card: {
     backgroundColor: '#1E2336',
     borderRadius: 16,
-    padding: 16,
-  },
-  infoRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    paddingVertical: 16,
+    paddingHorizontal: 20,
     marginBottom: 12,
+    shadowColor: '#000',
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
   },
-  label: {
+  cardLabel: {
     color: '#B0B3C2',
-    fontSize: 16,
+    fontSize: 15,
+    marginBottom: 6,
   },
-  value: {
+  cardValue: {
     color: '#FFFFFF',
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '600',
   },
 });
